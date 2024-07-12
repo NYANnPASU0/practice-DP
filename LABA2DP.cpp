@@ -165,10 +165,10 @@ void backpack()
 			}
 		}
 	}
-	int curr = pack[n][0];
+	int curr = 0;
 	for (int j = 0; j <= s; j++)
 	{
-		if (pack[n][j] <= curr)
+		if (curr < pack[n][j])
 		{
 			curr = pack[n][j];
 		}
