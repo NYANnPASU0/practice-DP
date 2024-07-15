@@ -152,7 +152,7 @@ void dfs_comp_connect()
 	std::cout << cnt << std::endl;
 }
 
-void dfs_2(int x, int y, std::vector<std::vector<int>>& G, std::vector<int> Mark, bool& flag)
+void dfs_2(int x, int y, std::vector<std::vector<int>>& G, std::vector<int>& Mark, bool& flag)
 {
 	//y - предок
 	Mark[x] = 1;
