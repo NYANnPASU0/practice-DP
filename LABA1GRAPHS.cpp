@@ -34,14 +34,13 @@ void BFS_comp_connect()
 	std::vector<std::vector<int>> G(n + 1);
 	std::vector<int>Mark(n + 1);
 	int a, b;
-	//граф задается списком ребер 
 	for (int i = 0; i < m; i++)
 	{
 		std::cin >> a >> b;
 		G[a].push_back(b);
 		G[b].push_back(a);
 	}
-	int cnt = 0; //кол-во компонент связности
+	int cnt = 0;
 	for (int i = 1; i <= n; i++)
 	{
 		if (Mark[i] == 0)
@@ -70,7 +69,6 @@ void BFS_short()
 	Put[start] = start;
 	std::vector<int>Len(n + 1);
 	int a, b;
-	//граф задается списком ребер 
 	for (int i = 0; i < m; i++)
 	{
 		std::cin >> a >> b;
@@ -268,34 +266,32 @@ void dfs_cycle()
 	else std::cout << "ЦИКЛА НЕТ" << std::endl;
 }
 
-void Len_1(std::vector<std::vector<std::pair<int, int>>>& G, std::vector<int>& Mark, std::vector<int>& Len_, int start, int finish, int n)
+void Len_1(std::vector<std::vector<std::pair<int, int>>>& G, std::vector<int>& used, std::vector<int>& Len_, int start, int finish, int n)
 {
 	Len_[start] = 0;
+	int tmp;
 	for (int i = 0; i < n; i++)
 	{
-		int u = -1;
-		for (int j = 0; j < n; j++)
+		tmp = -1; //пока что ни одна вершина не выбрана
+		int lenght = 1e9;
+		for (int j = 0; j <= n; j++)
 		{
-			if (Mark[j] == 0 && (u == -1 || Len_[j] < Len_[u]))
+			if (used[j] == 0 && lenght > Len_[j])
 			{
-				u = j;
+				lenght = Len_[j];
+				tmp = j;
 			}
 		}
-		if (Len_[u] == 1e9)
+		if (tmp != -1)
 		{
-			break;
-		}
-		Mark[u] = 1;
-		for (int j = 0; j < G[u].size(); j++)
-		{
-			if (Len_[u] + G[u][j].first < Len_[G[u][j].second])
+			used[tmp] = 1;
+			for (int j = 0; j < G[tmp].size(); j++)
 			{
-				Len_[G[u][j].second] = Len_[u] + G[u][j].first;
+				Len_[G[tmp][j].second] = std::min(Len_[G[tmp][j].second], Len_[tmp] + G[tmp][j].first);
 			}
 		}
 	}
-	if (Len_[finish] != 1e9) std::cout << Len_[finish] << std::endl;
-	else std::cout << -1 << std::endl;
+	if (used[finish] == 1) std::cout << Len_[finish] << std::endl;
 }
 
 void Dejkstra_school()
@@ -306,7 +302,7 @@ void Dejkstra_school()
 	std::cout << std::endl << "start, finish: ";
 	std::cin >> start >> finish;
 	std::vector<std::vector<std::pair<int, int>>> G(n + 1);
-	std::vector<int> Mark(n), Len_(n + 1, 1e9);
+	std::vector<int> used(n + 1), Len_(n + 1, 1e9);
 	for (int i = 0; i < m; i++)
 	{
 		int a, b, weight;
@@ -314,7 +310,7 @@ void Dejkstra_school()
 		G[a].emplace_back(weight, b);
 		G[b].emplace_back(weight, a);
 	}
-	Len_1(G, Mark, Len_, start, finish, n);
+	Len_1(G, used, Len_, start, finish, n);
 }
 
 void Len_2(std::vector<std::vector<std::pair<int, int>>>& G, std::vector<int>& Mark, std::vector<int>& Len_, int start, int finish, int n)
