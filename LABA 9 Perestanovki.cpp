@@ -299,7 +299,7 @@ int main()
 
 
     //----------------------------------------------------------------
-    std::cout << std::endl << "++A: " << std::endl;
+    std::cout << std::endl << "A++: " << std::endl;
     ++permA;
     permA.print();
     std::cout << std::endl;
