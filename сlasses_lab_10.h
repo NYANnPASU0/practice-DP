@@ -284,14 +284,7 @@ public:
 
     bool on_the_line(const Line& L1, const Point& p) const
     {
-        if (p.y == L1.k * p.x + L1.b)
-        {
-            return true;
-        }
-        else 
-        {
-            return false;
-        }
+        return (p.y == L1.k * p.x + L1.b);
     }
 
     int direction(const Point& a, const Point& b, const Point& c) const
@@ -307,13 +300,22 @@ public:
         }
         return 1;
     }
+
     bool isIntersect(const Line& l1, const Line& l2) const
     {
-        if (l1.k == l2.k && l1.b != l2.b)
+        if (on_the_line(l1, l2.A) || on_the_line(l1, l2.B) || on_the_line(l2, l1.A) || on_the_line(l2, l1.B))
         {
-            return false;
+            return true;
         }
-        return true;
+        int d1 = direction(l1.A, l1.B, l2.A);
+        int d2 = direction(l1.A, l1.B, l2.B);
+        int d3 = direction(l2.A, l2.B, l1.A);
+        int d4 = direction(l2.A, l2.B, l1.B);
+        if (d1 != d2 && d3 != d4)
+        {
+            return true;
+        }
+        return false;
     }
 
     bool equal(double& a, double& b) const
@@ -535,34 +537,21 @@ public:
 
     bool containsPoint(const Point& point) const
     {
-        if (size_ < 3)
+        if (points.size() < 3)
         {
             return false;
         }
-        Line big_horizonal_line = { point, { INT16_MAX, point.y } };
+        Line big_horizontal_line = { point, { std::numeric_limits<double>::max(), point.y } };
         int count = 0;
-        int i = 0;
-        while (i != 0)
+        for (size_t i = 0; i < points.size(); i++)
         {
-            Line side = { points[i], Next(i) };
-            if (isIntersect(side, big_horizonal_line))
+            Line side = { points[i], points[(i + 1) % points.size()] };
+            if (isIntersect(side, big_horizontal_line) && direction(side.A, point, side.B) != 0)
             {
-                if (direction(side.A , point, side.B ) == 0)
-                {
-                    return on_the_line(side, point);
-                }
                 count++;
             }
-            i = (i + 1) % size_;
         }
-        if (count % 2 == 0)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return count % 2 == 1;
     }
 
     bool isConvex()

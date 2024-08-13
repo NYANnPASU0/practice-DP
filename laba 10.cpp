@@ -31,7 +31,7 @@ void print_all_shapes(int a = 1)
     {
         for (int i = 0; i < ALL_POINTS.size(); i++)
         {
-            std::cout << "  " << a + i << ") Точка" << ")\n";
+            std::cout << "  " << a + i << ") Точка" << std::endl;
         }
         a += ALL_POINTS.size();
     }
@@ -39,7 +39,7 @@ void print_all_shapes(int a = 1)
     {
         for (int i = 0; i < ALL_LINES.size(); i++)
         {
-            std::cout << "  " << a + i << ") Линия" << '\n';
+            std::cout << "  " << a + i << ") Линия" << std::endl;
         }
         a += ALL_LINES.size();
     }
@@ -245,10 +245,11 @@ void menu(int num)
             }
         }
     }
-    else if (num == 13) {
+    else if (num == 13)
+    {
         int a ,ind;
         a = 1;
-        std::cout << "Можно удалить: " << std::endl;
+        std::cout << "Можно удалить (за исключением точек и линий) : " << std::endl;
         print_all_shapes();
         std::cin >> ind;
         if (ind > ALL_POINTS.size() + ALL_LINES.size() + ALL_SHAPES.size())
@@ -262,19 +263,6 @@ void menu(int num)
             std::vector< std::unique_ptr<Shape>>::iterator pos = ALL_SHAPES.begin() + ind;
             ALL_SHAPES.erase(pos);
         }
-        //линии
-        else if (ind >= ALL_POINTS.size())
-        {
-            ind += -1 - ALL_POINTS.size();
-            std::vector<Line> ::iterator pos = ALL_LINES.begin() + ind;
-            ALL_LINES.erase(pos);
-        }
-        else
-        {
-            std::vector<Point> ::iterator pos = ALL_POINTS.begin() + ind - 1;
-            ALL_POINTS.erase(pos);
-        }
-
     }
     else if (num == 14)
     {
@@ -322,9 +310,9 @@ void menu(int num)
     else if (num == 16)
     {
         int a = 1;
-        int i, j;
-        std::cout << "Какие фигуры проверить на равенство? " << std::endl;
+        std::cout << "Какие фигуры вы хотите проверить на равенство? " << std::endl;
         print_all_shapes();
+        int i, j;
         std::cout << "Введите номера: ";
         std::cin >> i >> j;
         i--;
@@ -394,7 +382,7 @@ void menu(int num)
             if (i > ALL_POINTS.size() + ALL_LINES.size() + ALL_SHAPES.size() || j > ALL_POINTS.size() + ALL_LINES.size() + ALL_SHAPES.size() ||
                 i <= ALL_POINTS.size() + ALL_LINES.size() || j <= ALL_POINTS.size() + ALL_LINES.size())
             {
-                std::cout << "Неверный ввод!\n";
+                std::cout << "Неверный ввод!" << std::endl;
             }
             else
             {
@@ -417,9 +405,8 @@ void menu(int num)
     }
     else if (num == 19)
     {
-        int a, x;
-        a = 1;
-        std::cout << "Выбрать фигуру?" << std::endl;
+        int a = 1, x;
+        std::cout << "Выбрать фигуру: " << std::endl;
         print_all_shapes();
         std::cin >> x;
         x--;
@@ -427,13 +414,13 @@ void menu(int num)
         std::cout << "Введите координаты точки (x, y): ";
         std::cin >> i >> j;
         Point P(i, j);
-        if (x > ALL_POINTS.size() + ALL_LINES.size() + ALL_SHAPES.size())
+        if (x >= ALL_POINTS.size() + ALL_LINES.size() + ALL_SHAPES.size())
         {
-            std::cout << "Введено неверно!\n";
+            std::cout << "Введено неверно" << std::endl;
         }
-        else if (x > ALL_POINTS.size() + ALL_LINES.size())
+        else if (x >= ALL_POINTS.size() + ALL_LINES.size())
         {
-            x -= 1 + ALL_POINTS.size() + ALL_LINES.size();
+            x -= ALL_POINTS.size() + ALL_LINES.size();
             if (ALL_SHAPES[x].get()->containsPoint(P))
             {
                 std::cout << "True" << std::endl;
@@ -442,11 +429,10 @@ void menu(int num)
             {
                 std::cout << "False" << std::endl;
             }
-
         }
-        else if (x > ALL_POINTS.size())
+        else if (x >= ALL_POINTS.size())
         {
-            x -= 1 + ALL_POINTS.size();
+            x -= ALL_POINTS.size();
             if (P.y == ALL_LINES[x].k * P.x + ALL_LINES[x].b)
             {
                 std::cout << "True" << std::endl;
@@ -455,11 +441,10 @@ void menu(int num)
             {
                 std::cout << "False" << std::endl;
             }
-
         }
         else
         {
-            if (ALL_POINTS[x - 1] == P)
+            if (ALL_POINTS[x] == P)
             {
                 std::cout << "True" << std::endl;
             }
@@ -547,6 +532,7 @@ void createMenu()
     glutAddMenuEntry("Площадь", 15);
     glutAddMenuEntry("Равенство", 16);
     glutAddMenuEntry("Подобие", 18);
+    glutAddMenuEntry("Точка внутри фигуры", 19);
 
     menu_id = glutCreateMenu(menu);
     glutAddMenuEntry("Очистить всё", 1);
