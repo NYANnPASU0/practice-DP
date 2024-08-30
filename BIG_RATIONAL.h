@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 #include "BIG_INTEGER.h"
 #include <fstream>
 #include <iostream>
@@ -35,7 +36,7 @@ public:
 	}
 
 	BigRational(const int& a)
-	{ 
+	{
 		std::string s = std::to_string(a);
 		BigRational br = s;
 		*this = br;
@@ -61,7 +62,7 @@ public:
 
 	~BigRational() = default;
 
-	
+
 
 	std::string toString() const
 	{
@@ -208,14 +209,14 @@ public:
 	BigRational operator-() const
 	{
 		BigRational result = *this;
-		return BigRational(-result.A, result.B); 
+		return BigRational(-result.A, result.B);
 	}
 
 
 	//// ++
 	BigRational& operator++()
 	{
-		BigRational one (1);
+		BigRational one(1);
 		*this += one;
 		return *this;
 	}
@@ -312,7 +313,7 @@ public:
 
 
 
-	BigInteger NOK(BigInteger& a,BigInteger& b) const
+	BigInteger NOK(BigInteger& a, BigInteger& b) const
 	{
 		BigInteger maximum;
 		if (a >= b)
