@@ -105,10 +105,10 @@ public:
 
     Matrix operator+(const Matrix& other) const
     {
-        if (M != other.M || N != other.N)
-        {
-            throw std::invalid_argument("different sizes");
-        }
+        //if (M != other.M || N != other.N)
+        //{
+        //    throw std::invalid_argument("different sizes");
+        //}
 
         Matrix result;
         for (unsigned row = 0; row < M; row++)
@@ -124,10 +124,10 @@ public:
 
     Matrix operator-(const Matrix& other) const
     {
-        if (M != other.M || N != other.N)
-        {
-            throw std::invalid_argument("different sizes");
-        }
+        //if (M != other.M || N != other.N)
+        //{
+        //    throw std::invalid_argument("different sizes");
+        //}
         Matrix result;
         for (unsigned row = 0; row < M; row++)
         {
@@ -142,10 +142,10 @@ public:
 
     Matrix operator*(const Matrix& other) const
     {
-        if (M != other.M || N != other.N)
-        {
-            throw std::invalid_argument("different sizes");
-        }
+        //if (M != other.M || N != other.N)
+        //{
+        //    throw std::invalid_argument("different sizes");
+        //}
         Matrix result;
         for (unsigned row = 0; row < M; row++)
         {
@@ -165,10 +165,10 @@ public:
 
     Matrix& operator*=(const Matrix& other)
     {
-        if (M != other.M || N != other.N)
-        {
-            throw std::invalid_argument("different sizes");
-        }
+        //if (M != other.M || N != other.N)
+        //{
+        //    throw std::invalid_argument("different sizes");
+        //}
         *this = *this * other;
         return *this;
     }
@@ -242,7 +242,7 @@ public:
         Field result = 0;
         for (unsigned i = 0; i < M; i++)
         {
-            result += data[i][i];
+            result = result + data[i][i];
         }
         return result;
     }
@@ -349,7 +349,7 @@ public:
                     }
                     minor.push_back(row);
                 }
-                det += sign * mat[0][i] * determinant(minor);
+                det = det + (sign * mat[0][i] * determinant(minor));
                 sign = -sign;
             }
             return det;
@@ -404,7 +404,7 @@ public:
                     lv = mat[i][lead];
                     for (size_t j = 0; j < mat[r].size(); j++)
                     {
-                        mat[i][j] -= lv * mat[r][j];
+                        mat[i][j] = mat[i][j] - (lv * mat[r][j]);
                     }
                 }
             }
@@ -498,7 +498,7 @@ public:
 
 
 
-    void print() const
+    void print()
     {
         if (tr)
         {

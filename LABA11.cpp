@@ -99,50 +99,49 @@ int main()
     std::cout << "Ранг матрицы: " << ran << '\n';
 
 
-    /*Rational trace = matrix.trace();
-    cout << "След матрицы: " << trace << '\n';*/
+    BigRational trace = matrix.trace();
+    std::cout << "След матрицы: " << trace << '\n';
 
     std::cout << "Tранспонированная матрица:  " << '\n';
     matrix.transposed().print();
 
 
 
-    /*Matrix<2, 3, Rational> obr = matrix.inverted(); //!!!!!!!!!!!!!!!!!!!!!!!!!  РАБОТАЕТ НЕ ОЧЕНЬ ПРАВИЛЬНО !!!!!!!!!!!
-    cout << "Обратная матрица:  " << '\n';
-    obr.print();*/
+    //Matrix<2, 2, BigRational> obr = matrix.inverted(); //!!!!!!!!!!!!!!!!!!!!!!!!!  РАБОТАЕТ НЕ ОЧЕНЬ ПРАВИЛЬНО !!!!!!!!!!!
+    //std::cout << "Обратная матрица:  " << '\n';
+    //obr.print();
 
-    /*cout << "Обратимая от данной:  " << '\n';
-     obr.invert();
-     obr.print();*/
+    // std::cout << "Обратимая от данной:  " << '\n';
+    // obr.invert();
+    // obr.print();
 
-     /* cout << '\n'; cout << '\n';
+    //std::cout << '\n'; std::cout << '\n';
 
 
 
-      cout << "первая строка нашей доп. матрицы: " << '\n';
-      std::vector<Rational> firstRow = matrix.getRow(0);
-      for (int i = 0; i < firstRow.size(); ++i) {cout << firstRow[i] << " ";}
+    std::cout << "первая строка нашей доп. матрицы: " << '\n';
+      std::vector<BigRational> firstRow = matrix.getRow(0);
+      for (int i = 0; i < firstRow.size(); ++i) { std::cout << firstRow[i] << " ";}
 
-      cout << '\n';
-      cout << '\n';
+      std::cout << '\n';
+      std::cout << '\n';
 
-      cout << "первый стролбец нашей доп. матрицы: " << '\n';
-      std::vector<Rational> firstColumn = matrix.getColumn(0);
-      for (int i = 0; i < firstColumn.size(); ++i) { cout << firstColumn[i] << '\n'; }
+      std::cout << "первый стролбец нашей доп. матрицы: " << '\n';
+      std::vector<BigRational> firstColumn = matrix.getColumn(0);
+      for (int i = 0; i < firstColumn.size(); ++i) { std::cout << firstColumn[i] << '\n'; }
 
-      cout << '\n';
-      cout << '\n';
+      std::cout << '\n';
+      std::cout << '\n';
 
-      cout << "смотрим значение: " << '\n';
-      Rational value = matrix(0, 1);
-      cout << value; cout << '\n';
+      std::cout << "смотрим значение: " << '\n';
+      BigRational value = matrix(0, 1);
+      std::cout << value; std::cout << '\n';
 
-      cout << "теперь меняем его на: " << '\n';
-      matrix(0, 1) = Rational(5, 5);
-      cout << Rational(5, 5) << '\n';
+      std::cout << "теперь меняем его на: 5/5" << '\n';
+      matrix(0, 1) = BigRational(5, 5);
 
-      cout << "выводим получившуюся матрицу: " << '\n';
-      matrix.print();*/
+      std::cout << "выводим получившуюся матрицу: " << '\n';
+      matrix.print();
 
 
 
