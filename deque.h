@@ -7,7 +7,7 @@ class Deque
 {
 private:
     T* deque;
-    int capacity; //емкость
+    int capacity; //макс количество элементов в массиве
     int front_ind;
     int back_ind;
     int size;
@@ -169,17 +169,20 @@ public:
             index++;
             return *this;
         }
+
         Iterator operator++(int)
         {
             Iterator tmp = *this;
             ++(*this);
             return tmp;
         }
+
         Iterator& operator+=(int n)
         {
             index += n;
             return *this;
         }
+
         Iterator operator+(int n)
         {
             Iterator tmp = *this;
@@ -194,17 +197,20 @@ public:
             index--;
             return *this;
         }
+
         Iterator operator--(int)
         {
             Iterator temp = *this;
             --(*this);
             return temp;
         }
+
         Iterator& operator-=(int n)
         {
             index -= n;
             return *this;
         }
+
         Iterator operator-(int n)
         {
             Iterator tmp = *this;
@@ -394,15 +400,15 @@ public:
     // указывает на расположение после последнего элемента в обратном deque.
     Iterator rend()
     {
-        return Iterator(this, size);
+        return Iterator(this, -1);
     }
     CONST_Iterator rend() const
     {
-        return CONST_Iterator(this, size);
+        return CONST_Iterator(this, -1);
     }
     CONST_Iterator crend() const
     {
-        return CONST_Iterator(this, size);
+        return CONST_Iterator(this, -1);
     }
 
 
