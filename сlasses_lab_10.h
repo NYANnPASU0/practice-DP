@@ -12,7 +12,8 @@ class Point
 public:
     double x, y;
 
-    Point() {
+    Point()
+    {
         x = 0;
         y = 0;
     }
@@ -51,6 +52,7 @@ public:
         y += P.y;
         return *this;
     }
+
     Point& operator-=(const Point& P)
     {
         x -= P.x;
@@ -85,9 +87,9 @@ public:
         return (tmp += -P2);
     }
 
-    Point rotate(Point P, double angle)
+    Point rotate(Point P, double angle) //P - точка вращения
     {
-        double deg = angle * Pi / 180.0;
+        double deg = angle * Pi / 180.0; //преобразование в радианы
         double x, y;
         x = P.x + (this->x - P.x) * cosf(deg) - (this->y - P.y) * sinf(deg);
         y = P.y + (this->x - P.x) * sinf(deg) + (this->y - P.y) * cosf(deg);
@@ -96,7 +98,7 @@ public:
 
 };
 
-long double dist2(Point X, Point Y)
+long double dist2(Point X, Point Y) //расстояние между точками
 {
     Point Z = X - Y;
     return Z.x * Z.x + Z.y * Z.y;
