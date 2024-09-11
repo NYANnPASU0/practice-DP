@@ -1,4 +1,3 @@
-#pragma once
 #include <iostream>
 #include <vector>
 #include <string>
@@ -45,7 +44,7 @@ public:
 	}
 
 
-	BigInteger(const BigInteger& number)
+	BigInteger(const BigInteger& number) 
 	{
 		sgn = number.sgn;
 		numbers.resize(number.numbers.size());
@@ -71,7 +70,7 @@ public:
 		}
 	}
 
-	BigInteger NOD(BigInteger& b) const {
+	BigInteger NOD( BigInteger& b) const {
 		BigInteger a = *this;
 		BigInteger null(0);
 		if (a < null) a = -a;
@@ -635,7 +634,8 @@ public:
 		{
 			rez += '-';
 		}
-		for (int i = numbers.size() - 1; i >= 0; i--) {
+		for (int i = numbers.size() - 1; i >= 0; i--)
+		{
 			rez += std::to_string(numbers[i]);
 		}
 		return rez;

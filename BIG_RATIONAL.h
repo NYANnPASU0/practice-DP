@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include "BIG_INTEGER.h"
 #include <fstream>
 #include <iostream>
@@ -28,21 +27,21 @@ public:
 	}
 
 
-	BigRational(const double& a)
+	BigRational(const double a)
 	{
 		std::string s = std::to_string(a);
 		BigRational br = s;
 		*this = br;
 	}
 
-	BigRational(const int& a)
+	BigRational(const int a)
 	{
 		std::string s = std::to_string(a);
 		BigRational br = s;
 		*this = br;
 	}
 
-	BigRational(std::string& a)
+	BigRational(std::string a)
 	{
 		int it = 0;
 		for (int i = 0; i < a.size(); i++)
@@ -68,7 +67,9 @@ public:
 	{
 		std::string str = A.toString();
 		if (B != 1)
+		{
 			str += '/' + B.toString();
+		}
 		return str;
 	}
 
@@ -89,15 +90,21 @@ public:
 		else
 		{
 			for (int i = 0; i < str.size() - precision; i++)
+			{
 				str2 += str[i];
+			}
 			it = str.size() - precision;
 		}
 		if (precision != 0)
+		{
 			str2 += '.';
+		}
 		if (str.size() < precision)
 		{
 			for (int i = 0; i < precision - str.size(); i++)
+			{
 				str2 += '0';
+			}
 		}
 		for (int i = it; i < str.size(); i++)
 			str2 += str[i];
@@ -450,14 +457,6 @@ public:
 	{
 		return !(*this != a);
 	}
-
-	/*double toDecimalString()
-	{
-		BigInteger a(A);
-		BigInteger b(B);
-		double decimalValue = static_cast<double>(a) / static_cast<double>(b);
-		return decimalValue;
-	}*/
 
 	///////////// ¬вод и вывод
 	friend std::istream& operator>>(std::istream& is, BigRational& s) {
