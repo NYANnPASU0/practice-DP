@@ -82,6 +82,7 @@ Binary_Tree_Search* insert(Binary_Tree_Search* root, int key) //добавлен
 	return root;
 }
 
+
 int depth(Binary_Tree_Search* root) //подсчет количества листьев 
 {
 	if (root == nullptr)
