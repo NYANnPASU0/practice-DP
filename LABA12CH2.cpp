@@ -136,8 +136,15 @@ Binary_Tree_Search* remove(Binary_Tree_Search* root, int key) //удаление
 	//Узел имеет только одного ребенка
 	else if (curr->l == nullptr || curr->r == nullptr)
 	{
-		Binary_Tree_Search* child = (curr->l != nullptr) ? curr->l : curr->r;
-
+		Binary_Tree_Search* child;
+		if (curr->l != nullptr)
+		{
+			child = curr->l;
+		}
+		else
+		{
+			child = curr->r;
+		}
 		if (curr == root)
 		{
 			delete curr;
