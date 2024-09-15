@@ -37,25 +37,6 @@ public:
         }
     }
 
-    /*Matrix()
-    {
-        for (size_t i = 0; i < M; i++)
-        {
-            data.push_back(std::vector<Field>(N));
-            for (size_t j = 0; j < N; j++)
-            {
-                if (i == j)
-                {
-                    data[i][j] = Field(1);
-                }
-                else
-                {
-                    data[i][j] = Field(0);
-                }
-            }
-        }
-    }*/
-
 
     Matrix(const Matrix& other)
     {
@@ -103,12 +84,22 @@ public:
         data[row][col] = value;
     }
 
+
+    unsigned get_M() const
+    {
+        return M;
+    }
+    unsigned get_N() const
+    {
+        return N;
+    }
+
     Matrix operator+(const Matrix& other) const
     {
-        //if (M != other.M || N != other.N)
-        //{
-        //    throw std::invalid_argument("different sizes");
-        //}
+        if (this->get_M() != other.get_M() || this->get_N() != other.get_N())
+        {
+            throw std::invalid_argument("different sizes");
+        }
 
         Matrix result;
         for (unsigned row = 0; row < M; row++)
@@ -124,10 +115,10 @@ public:
 
     Matrix operator-(const Matrix& other) const
     {
-        //if (M != other.M || N != other.N)
-        //{
-        //    throw std::invalid_argument("different sizes");
-        //}
+        if (this->get_M() != other.get_M() || this->get_N() != other.get_N())
+        {
+            throw std::invalid_argument("different sizes");
+        }
         Matrix result;
         for (unsigned row = 0; row < M; row++)
         {
@@ -142,10 +133,10 @@ public:
 
     Matrix operator*(const Matrix& other) const
     {
-        //if (M != other.M || N != other.N)
-        //{
-        //    throw std::invalid_argument("different sizes");
-        //}
+        if (this->get_M() != other.get_M() || this->get_N() != other.get_N())
+        {
+            throw std::invalid_argument("different sizes");
+        }
         Matrix result;
         for (unsigned row = 0; row < M; row++)
         {
@@ -165,10 +156,10 @@ public:
 
     Matrix& operator*=(const Matrix& other)
     {
-        //if (M != other.M || N != other.N)
-        //{
-        //    throw std::invalid_argument("different sizes");
-        //}
+        if (this->get_M() != other.get_M() || this->get_N() != other.get_N())
+        {
+            throw std::invalid_argument("different sizes");
+        }
         *this = *this * other;
         return *this;
     }
@@ -310,7 +301,7 @@ public:
 
     const Field& operator()(unsigned row, unsigned col) const
     {
-        if (row >= M || col >= N) 
+        if (row >= M || col >= N)
         {
             throw std::invalid_argument("Invalid indices");
         }
@@ -319,37 +310,35 @@ public:
 
 
 
-    Field determinant(const std::vector<std::vector<Field>>& mat) const    // Вспомогательный метод для вычисления определителя
+    Field determ(const std::vector<std::vector<Field>>& matrix) const
     {
-        if (mat.size() == 1)
+        if (matrix.size() == 1)
         {
-            return mat[0][0];
+            return matrix[0][0];
         }
-        else if (mat.size() == 2)
+        else if (matrix.size() == 2)
         {
-            return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0];
+            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
         }
         else
         {
             Field det = 0;
             int sign = 1;
-            for (size_t i = 0; i < mat.size(); i++)
+            for (size_t i = 0; i < matrix.size(); i++)
             {
-                // Получаем минор матрицы.
                 std::vector<std::vector<Field>> minor;
-                for (size_t j = 1; j < mat.size(); j++)
+                for (size_t j = 1; j < matrix.size(); j++)
                 {
                     std::vector<Field> row;
-                    for (size_t k = 0; k < mat.size(); k++)
+                    for (size_t k = 0; k < matrix.size(); k++)
                     {
                         if (k != i)
                         {
-                            row.push_back(mat[j][k]);
+                            row.push_back(matrix[j][k]);
                         }
                     }
                     minor.push_back(row);
                 }
-                det = det + (sign * mat[0][i] * determinant(minor));
                 sign = -sign;
             }
             return det;
@@ -371,50 +360,59 @@ public:
         }
         else
         {
-            return determinant(data);
+            return determ(data);
         }
     }
 
 
-    // Вспомогательный метод для приведения матрицы к ступенчатому виду.
-    void to_row_echelon_form(std::vector<std::vector<Field>>& mat) const
+    //приведениe матрицы к ступенчатому виду
+    void stupench_vid(std::vector<std::vector<Field>>& matrix) const
     {
-        size_t lead = 0;
-        for (size_t r = 0; r < mat.size(); r++)
+        int curr_elem = 0;
+        for (int row = 0; row < matrix.size(); row++)
         {
-            if (lead >= mat[r].size()) break;
-            size_t i = r;
-            while (mat[i][lead] == 0)
+            if (curr_elem >= matrix[row].size())
+            {
+                break;
+            }
+            int i = row;
+            while (matrix[i][curr_elem] == 0)
             {
                 i++;
-                if (i == mat.size())
+                if (i == matrix.size())
                 {
-                    i = r;
-                    lead++;
-                    if (lead == mat[r].size()) return;
-                }
-            }
-            std::swap(mat[i], mat[r]);
-            Field lv = mat[r][lead];
-            for (size_t j = 0; j < mat[r].size(); j++) mat[r][j] /= lv;
-            for (size_t i = 0; i < mat.size(); i++)
-            {
-                if (i != r)
-                {
-                    lv = mat[i][lead];
-                    for (size_t j = 0; j < mat[r].size(); j++)
+                    i = row;
+                    curr_elem++;
+                    if (curr_elem == matrix[row].size())
                     {
-                        mat[i][j] = mat[i][j] - (lv * mat[r][j]);
+                        return;
                     }
                 }
             }
-            lead++;
+            std::swap(matrix[i], matrix[row]);
+            Field delitel = matrix[row][curr_elem];
+            for (int j = 0; j < matrix[row].size(); j++)
+            {
+                matrix[row][j] /= delitel;
+            }
+            for (int i = 0; i < matrix.size(); i++)
+            {
+                if (i != row)
+                {
+                    delitel = matrix[i][curr_elem];
+                    for (int j = 0; j < matrix[row].size(); j++)
+                    {
+                        matrix[i][j] = matrix[i][j] - (delitel * matrix[row][j]);
+                    }
+                }
+            }
+            curr_elem++;
         }
     }
     unsigned rank() const // Ранг матрицы
     {
         std::vector<std::vector<Field>> tmp = data;
-        to_row_echelon_form(tmp);
+        stupench_vid(tmp);
         unsigned rank = 0;
         for (size_t i = 0; i < tmp.size(); i++)
         {
@@ -438,43 +436,46 @@ public:
             throw std::invalid_argument("Only defined for square matrices");
         }
         Field det = this->det();
-        //если определитель равен нулю то значит что обратная матрица не существует
-        if (det == Field(0))
-        {
-            throw std::invalid_argument("Matrix cannot be inverted");
-        }
+        //if (det == Field(0))
+        //{
+        //    throw std::invalid_argument("Matrix cannot be inverted");
+        //}
         Matrix<M, N, Field> obratn;
         for (unsigned i = 0; i < M; i++)
         {
             for (unsigned j = 0; j < N; j++)
             {
-
                 std::vector<std::vector<Field>> minor;
                 for (unsigned row = 0; row < M; row++)
                 {
-                    if (row == i) continue;
-                    std::vector<Field> minorRow;
+                    if (row == i)
+                    {
+                        continue;
+                    }
+                    std::vector<Field> row_min;
                     for (unsigned col = 0; col < N; col++)
                     {
-                        if (col == j) continue;
-                        minorRow.push_back(data[row][col]);
+                        if (col == j)
+                        {
+                            continue;
+                        }
+                        row_min.push_back(data[row][col]);
                     }
-                    minor.push_back(minorRow);
+                    minor.push_back(row_min);
                 }
-                Field minorDet = determinant(minor);
-                Field cofactor;
+                Field determ_of_minor = determ(minor);
+                Field sgn;
                 if ((i + j) % 2 == 0)
                 {
-                    cofactor = minorDet;
+                    sgn = determ_of_minor;
                 }
                 else
                 {
-                    cofactor = -minorDet;
+                    sgn = -determ_of_minor;
                 }
-                obratn.set(j, i, cofactor);
+                obratn.set(j, i, sgn);
             }
         }
-        // Делим матрицу алгебраических дополнений на определитель
         for (unsigned i = 0; i < M; i++)
         {
             for (unsigned j = 0; j < N; j++)
@@ -482,7 +483,6 @@ public:
                 obratn.set(i, j, obratn.get(i, j) / det);
             }
         }
-
         return obratn;
     }
 
@@ -491,9 +491,6 @@ public:
     {
         *this = this->inverted();
     }
-
-
-
 
 
 
@@ -512,7 +509,6 @@ public:
             }
         }
         else
-
         {
             for (unsigned row = 0; row < M; row++)
             {
