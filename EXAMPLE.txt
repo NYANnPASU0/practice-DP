@@ -1,0 +1,5 @@
+Hello world! This is a test.
+This line has  multiple    spaces.
+Another line with no spaces.
+Yet another  example with   spaces.
+This   one has  the most    spaces   in       between.
