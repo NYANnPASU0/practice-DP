@@ -1,0 +1,66 @@
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
+
+
+namespace laba
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string File_put = "C://Users//Лиза//Desktop//task1//put//text.txt";
+            string[] lines = File.ReadAllLines(File_put);
+
+            string line_of_max_spaces = null;
+            int max_spaces = 0;
+
+            foreach (string line in lines)
+            {
+                int curr_spaces_count = count_max_spaces(line);
+                if (curr_spaces_count > max_spaces)
+                {
+                    max_spaces = curr_spaces_count;
+                    line_of_max_spaces = line;
+                }
+            }
+
+            if (line_of_max_spaces != null)
+            {
+                Console.WriteLine("Line with maximum counts of spaces: ");
+                Console.WriteLine(line_of_max_spaces);
+                Console.WriteLine($"Counts of spaces: {max_spaces}");
+            }
+            else
+            {
+                Console.WriteLine("File is empty");
+            }
+        }
+
+        static int count_max_spaces(string line)
+        {
+            int max_count = 0;
+            int curr_count = 0;
+
+            foreach (char c in line)
+            {
+                if (c == ' ')
+                {
+                    curr_count++;
+                    if (curr_count > max_count)
+                    {
+                        max_count = curr_count;
+                    }
+                }
+                else
+                {
+                    curr_count = 0;
+                }
+            }
+            return max_count;
+        }
+    }
+}
