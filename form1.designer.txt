@@ -1,0 +1,110 @@
+namespace laba2
+{
+    partial class Form1
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+        private void InitializeComponent()
+        {
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.buttonInitializeMatrix = new System.Windows.Forms.Button();
+            this.buttonProcessMatrix = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
+            this.buttonClose = new System.Windows.Forms.Button();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(12, 12);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(400, 250);
+            this.dataGridView1.TabIndex = 0;
+            // 
+            // dataGridView2
+            // 
+            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView2.Location = new System.Drawing.Point(12, 280);
+            this.dataGridView2.Name = "dataGridView2";
+            this.dataGridView2.Size = new System.Drawing.Size(400, 250);
+            this.dataGridView2.TabIndex = 1;
+            // 
+            // buttonInitializeMatrix
+            // 
+            this.buttonInitializeMatrix.Location = new System.Drawing.Point(430, 12);
+            this.buttonInitializeMatrix.Name = "buttonInitializeMatrix";
+            this.buttonInitializeMatrix.Size = new System.Drawing.Size(150, 30);
+            this.buttonInitializeMatrix.TabIndex = 2;
+            this.buttonInitializeMatrix.Text = "Заполнить";
+            this.buttonInitializeMatrix.UseVisualStyleBackColor = true;
+            this.buttonInitializeMatrix.Click += new System.EventHandler(this.buttonInitializeMatrix_Click);
+            // 
+            // buttonProcessMatrix
+            // 
+            this.buttonProcessMatrix.Location = new System.Drawing.Point(430, 50);
+            this.buttonProcessMatrix.Name = "buttonProcessMatrix";
+            this.buttonProcessMatrix.Size = new System.Drawing.Size(150, 30);
+            this.buttonProcessMatrix.TabIndex = 3;
+            this.buttonProcessMatrix.Text = "Изменить";
+            this.buttonProcessMatrix.UseVisualStyleBackColor = true;
+            this.buttonProcessMatrix.Click += new System.EventHandler(this.buttonProcessMatrix_Click);
+            // 
+            // buttonClose
+            // 
+            this.buttonClose.Location = new System.Drawing.Point(430, 150);
+            this.buttonClose.Name = "buttonClose";
+            this.buttonClose.Size = new System.Drawing.Size(150, 30);
+            this.buttonClose.TabIndex = 5;
+            this.buttonClose.Text = "Закрыть";
+            this.buttonClose.UseVisualStyleBackColor = true;
+            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(430, 200);
+            this.numericUpDown1.Minimum = new decimal(new int[] {1,0,0,0});
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(150, 30);
+            this.numericUpDown1.TabIndex = 6;
+            this.numericUpDown1.Value = new decimal(new int[] {1,0,0,0});
+            // 
+            // Form1
+            // 
+            this.ClientSize = new System.Drawing.Size(600, 550);
+            this.Controls.Add(this.numericUpDown1);
+            this.Controls.Add(this.buttonClose);
+            this.Controls.Add(this.buttonSave);
+            this.Controls.Add(this.buttonProcessMatrix);
+            this.Controls.Add(this.buttonInitializeMatrix);
+            this.Controls.Add(this.dataGridView2);
+            this.Controls.Add(this.dataGridView1);
+            this.Name = "Form1";
+            this.Text = "Matrix Processor";
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            this.ResumeLayout(false);
+        }
+
+        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView dataGridView2;
+        private System.Windows.Forms.Button buttonInitializeMatrix;
+        private System.Windows.Forms.Button buttonProcessMatrix;
+        private System.Windows.Forms.Button buttonSave;
+        private System.Windows.Forms.Button buttonClose;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+    }
+}

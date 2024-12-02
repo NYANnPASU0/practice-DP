@@ -1,0 +1,139 @@
+using System;
+using System.IO;
+using System.Windows.Forms;
+
+namespace laba2
+{
+    public partial class Form1 : Form
+    {
+        int n;
+        double[,] mas;
+
+        public Form1()
+        {
+            InitializeComponent();
+            this.dataGridView1.EditingControlShowing += new DataGridViewEditingControlShowingEventHandler(this.dataGridView1_EditingControlShowing);
+        }
+
+        private void buttonClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        void tb_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!(Char.IsDigit(e.KeyChar)) && !((e.KeyChar == '-')) && !((e.KeyChar == ',')))
+            {
+                if (e.KeyChar != (char)Keys.Back)
+                {
+                    e.Handled = true;
+                }
+            }
+        }
+
+        private void dataGridView1_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            TextBox tb = (TextBox)e.Control;
+            tb.KeyPress += new KeyPressEventHandler(tb_KeyPress);
+        }
+
+        private void buttonInitializeMatrix_Click(object sender, EventArgs e)
+        {
+            dataGridView1.Columns.Clear();
+            dataGridView1.ReadOnly = false;
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToDeleteRows = false;
+
+            n = (int)numericUpDown1.Value;
+            dataGridView1.AutoResizeColumns();
+
+            for (int i = 0; i < n; i++)
+            {
+                dataGridView1.Columns.Add("Column" + i, "Y" + i.ToString());
+            }
+
+            dataGridView1.RowCount = n;
+            mas = new double[n, n];
+        }
+
+        private void buttonProcessMatrix_Click(object sender, EventArgs e)
+        {
+            ProcessMatrix();
+        }
+
+        private void ProcessMatrix()
+        {
+            if (mas == null || mas.GetLength(0) == 0)
+            {
+                MessageBox.Show("Сначала инициализируйте матрицу.");
+                return;
+            }
+
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    if (dataGridView1.Rows[i].Cells[j].Value != null && !string.IsNullOrWhiteSpace(dataGridView1.Rows[i].Cells[j].Value.ToString()))
+                    {
+                        mas[i, j] = Convert.ToDouble(dataGridView1.Rows[i].Cells[j].Value);
+                    }
+                    else
+                    {
+                        mas[i, j] = 0;
+                    }
+                }
+            }
+            double maxElement = mas[0, 0];
+            double minElement = mas[0, 0];
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    if (mas[i, j] > maxElement)
+                    {
+                        maxElement = mas[i, j];
+                    }
+                    if (mas[i, j] < minElement)
+                    {
+                        minElement = mas[i, j];
+                    }
+                }
+            }
+            dataGridView2.Columns.Clear();
+            dataGridView2.Rows.Clear();
+            for (int i = 0; i < n; i++)
+            {
+                dataGridView2.Columns.Add("Column" + i, "Y" + i.ToString());
+            }
+            dataGridView2.RowCount = n;
+            if (maxElement == 0 || minElement == 0)
+            {
+                for (int i = 0; i < n; i++)
+                {
+                    for (int j = 0; j < n; j++)
+                    {
+                        dataGridView2.Rows[i].Cells[j].Value = mas[i, j];
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < n; i++)
+                {
+                    for (int j = 0; j < n; j++)
+                    {
+                        if ((i + j) % 2 != 0)
+                        {
+                            dataGridView2.Rows[i].Cells[j].Value = mas[i, j] / maxElement;
+                        }
+                        else
+                        {
+                            dataGridView2.Rows[i].Cells[j].Value = mas[i, j] / minElement;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+}
