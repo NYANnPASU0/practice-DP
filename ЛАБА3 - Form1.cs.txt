@@ -1,0 +1,247 @@
+using System;
+using ZedGraph;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using laba2;
+
+namespace Program
+{
+    public partial class Form1 : Form
+    {
+        private float minx, maxx, miny, maxy, W, H, W1, H1, dx, dy, h;
+        private bool drawSecondGraph = false;
+
+        //координаты
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            double x = (e.X - W1) / dx;
+            double y = (H1 - e.Y) / dy;
+            string text = string.Format("X: {0};    Y: {1}", x, y);
+            label1.Text = text;
+        }
+
+        public Form1()
+        {
+            InitializeComponent();
+            pictureBox1.MouseClick += pictureBox1_MouseClick;
+            pictureBox1.Paint += pictureBox1_Paint;
+        }
+
+        //функция
+        public double F1(double x)
+        {
+            double denominator = 2 * Math.Pow(x, 2) - 1;
+            double underRoot = Math.Pow(x, 2) - 1;
+            if (denominator == 0)
+            {
+                throw new DivideByZeroException("Знаменатель не может быть равен нулю.");
+
+            }
+            if (underRoot < 0)
+            {
+                throw new ArgumentOutOfRangeException("Подкоренное выражение не может быть отрицательным.");
+            }
+
+            return (Math.Pow(x, 2) * Math.Sqrt(underRoot)) / denominator;
+        }
+
+        //производная
+        public double F2(double x)
+        {
+            if (Math.Pow(x, 2) - 1 < 0)
+            {
+                throw new ArgumentOutOfRangeException("Подкоренное выражение не может быть отрицательным. Значение x должно быть либо меньше -1, либо больше 1.");
+            }
+            if (x == 0)
+            {
+                throw new DivideByZeroException("Знаменатель не может быть равен нулю.");
+            }
+            double denominator = Math.Sqrt((Math.Pow(x, 2)) - 1) * Math.Pow(((2 * Math.Pow(x, 2)) - 1), 2);
+            double numerator = 2 * Math.Pow(x, 5) - 3 * Math.Pow(x, 3) + 2 * x;
+            return numerator / denominator;
+        }
+
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            drawSecondGraph = !drawSecondGraph;
+            pictureBox1.Invalidate();
+        }
+
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        {
+            // Оси X и Y
+            e.Graphics.DrawLine(Pens.Black, W1, 0, W1, H);
+            e.Graphics.DrawLine(Pens.Black, 0, H1, W, H1);
+
+            // Подпись
+            Font font = new Font("Arial", 9, FontStyle.Regular);
+            Brush brush = Brushes.Black;
+            e.Graphics.DrawString("X", font, brush, W - 15, H1 + 10);
+            e.Graphics.DrawString("Y", font, brush, W1 - 20, 10);
+            e.Graphics.DrawString("Розовый цвет - график функции F1", font, brush, W1 + 180, 10);
+            e.Graphics.DrawString("Синий цвет - график её производной F2", font, brush, W1 + 180, 30);
+
+            // Линейка
+            Font fontSmall = new Font("Arial", 6, FontStyle.Regular);
+            for (int i = (int)miny; i <= maxy; i++)
+            {
+                e.Graphics.DrawLine(Pens.Black, W1 - 1, H1 + dy * i, W1 + 1, H1 + dy * i);
+                e.Graphics.DrawString((-(float)(i)).ToString(), fontSmall, brush, W1 - 15, H1 + dy * i);
+            }
+            for (int i = (int)minx; i <= maxx; i++)
+            {
+                e.Graphics.DrawLine(Pens.Black, W1 + dx * i, H1 + 1, W1 + dx * i, H1 - 1);
+                if (i != 0)
+                    e.Graphics.DrawString(i.ToString(), fontSmall, brush, W1 + dx * i - 10, H1 + 10);
+            }
+
+            // Отрисовка графика
+            if (drawSecondGraph)
+            {
+                DrawGraph(e.Graphics, F2, Pens.Blue, minx, maxx, h);
+            }
+            else
+            {
+                DrawGraph(e.Graphics, F1, Pens.DeepPink, minx, maxx, h);
+            }
+
+            FindAndDisplayRoots();
+        }
+
+        private void FindAndDisplayRoots()
+        {
+            string rootsText = "Нули функции F1:\n";
+            rootsText += FindRoots(F1, minx, maxx) + "\n";
+            rootsText += "Нули производной F2:\n";
+            rootsText += FindRoots(F2, minx, maxx) + "\n";
+            textBoxRoots.Text = rootsText;
+        }
+
+        private string FindRoots(Func<double, double> function, double minX, double maxX)
+        {
+            string roots = "";
+            double tolerance = 0.01; // Погрешность
+            double step = 0.1;
+
+            for (double x = minX; x < -1; x += step)
+            {
+                try
+                {
+                    double y = function(x);
+                    if (Math.Abs(y) < tolerance)
+                    {
+                        roots += $"x = {x:F2}\n;    ";
+                    }
+                }
+                catch (DivideByZeroException ex)
+                {
+                    Console.WriteLine($"Пропущено значение x = {x:F2}: {ex.Message}");
+                }
+                catch (ArgumentOutOfRangeException ex)
+                {
+                    Console.WriteLine($"Пропущено значение x = {x:F2}: {ex.Message}");
+                }
+            }
+            for (double x = 1; x <= maxX; x += step)
+            {
+                try
+                {
+                    double y = function(x);
+                    if (Math.Abs(y) < tolerance)
+                    {
+                        roots += $"x = {x:F2}\n;     ";
+                    }
+                }
+                catch (DivideByZeroException ex)
+                {
+                    Console.WriteLine($"Пропущено значение x = {x:F2}: {ex.Message}");
+                }
+                catch (ArgumentOutOfRangeException ex)
+                {
+                    Console.WriteLine($"Пропущено значение x = {x:F2}: {ex.Message}");
+                }
+            }
+            return string.IsNullOrEmpty(roots) ? "Нет нулей" : roots;
+        }
+
+
+        private void DrawGraph(Graphics g, Func<double, double> function, Pen pen, float minX, float maxX, float step)
+        {
+            //x < -1
+            for (float ix = minX; ix < -1; ix += step)
+            {
+                float y1;
+                try
+                {
+                    y1 = (float)function(ix);
+                    if (ix != minX)
+                    {
+                        g.DrawLine(pen, W1 + (ix - step) * dx, H1 - (float)function(ix - step) * dy, W1 + ix * dx, H1 - y1 * dy);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    continue;
+                }
+            }
+
+            //x > 1
+            for (float ix = 1; ix <= maxX; ix += step)
+            {
+                float y1;
+                try
+                {
+                    y1 = (float)function(ix);
+                    g.DrawLine(pen, W1 + (ix - step) * dx, H1 - (float)function(ix - step) * dy, W1 + ix * dx, H1 - y1 * dy);
+                }
+                catch (Exception ex)
+                {
+                    continue;
+                }
+            }
+        }
+
+
+        private void buttonOpenGraph2_Click(object sender, EventArgs e)
+        {
+            ZG_graph graphForm = new ZG_graph();
+            graphForm.Show();
+        }
+
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            W = pictureBox1.Width;
+            H = pictureBox1.Height;
+            W1 = W / 2;
+            H1 = H / 2;
+            miny = -10;
+            maxy = 10;
+            minx = -10;
+            maxx = 10;
+            h = 0.001f;
+            dx = W / (maxx - minx);
+            dy = H / (maxy - miny);
+
+            Button buttonOpenGraph2 = new Button
+            {
+                Text = "Открыть второй график",
+                Dock = DockStyle.Top
+            };
+            buttonOpenGraph2.Click += buttonOpenGraph2_Click;
+            Controls.Add(buttonOpenGraph2);
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
+

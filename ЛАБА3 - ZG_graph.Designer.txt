@@ -1,0 +1,36 @@
+namespace laba2
+{
+    partial class ZG_graph
+    {
+        private System.ComponentModel.IContainer components = null;
+        private ZedGraph.ZedGraphControl zedGraphControl1;
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+        private void InitializeComponent()
+        {
+            this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
+            this.SuspendLayout();
+            // zedGraphControl1
+            this.zedGraphControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.zedGraphControl1.Location = new System.Drawing.Point(0, 0);
+            this.zedGraphControl1.Name = "zedGraphControl1";
+            this.zedGraphControl1.Size = new System.Drawing.Size(800, 450); // Установите размер формы по вашему усмотрению
+            this.zedGraphControl1.TabIndex = 0;
+            // ZG_graph
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 450); // Установите размер формы по вашему усмотрению
+            this.Controls.Add(this.zedGraphControl1);
+            this.Name = "ZG_graph";
+            this.Text = "График F2";
+            this.ResumeLayout(false);
+        }
+    }
+}
+

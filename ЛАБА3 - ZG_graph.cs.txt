@@ -1,0 +1,116 @@
+using System;
+using ZedGraph;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace laba2
+{
+    public partial class ZG_graph : Form
+    {
+        public ZG_graph()
+        {
+            InitializeComponent();
+            LoadGraph();
+        }
+
+        private void LoadGraph()
+        {
+            double minX = -10, maxX = 10, step = 0.0001;
+            GraphPane pane = zedGraphControl1.GraphPane;
+            pane.Title.Text = "Графики F1 и F2";
+            pane.XAxis.Title.Text = "X";
+            pane.YAxis.Title.Text = "Y";
+
+            PointPairList pointsF1 = new PointPairList();
+            PointPairList pointsF2 = new PointPairList();
+
+            for (double x = minX; x < -1; x += step)
+            {
+                try
+                {
+                    double yF2 = F2(x);
+                    pointsF2.Add(x, yF2);
+
+                    double yF1 = F1(x);
+                    pointsF1.Add(x, yF1);
+                }
+                catch (Exception ex)
+                {
+                    continue;
+                }
+            }
+
+            for (double x = 1; x <= maxX; x += step)
+            {
+                try
+                {
+                    double yF2 = F2(x);
+                    pointsF2.Add(x, yF2);
+
+                    double yF1 = F1(x);
+                    pointsF1.Add(x, yF1);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ошибка при вычислении функции для x = {x}: {ex.Message}");
+                }
+            }
+            LineItem curveF1 = pane.AddCurve("F1(x)", pointsF1, System.Drawing.Color.Red, SymbolType.None);
+            LineItem curveF2 = pane.AddCurve("F2(x)", pointsF2, System.Drawing.Color.Blue, SymbolType.None);
+
+            pane.XAxis.Scale.Min = minX;
+            pane.XAxis.Scale.Max = maxX;
+            pane.YAxis.Scale.Min = -10;
+            pane.YAxis.Scale.Max = 10;
+
+
+            pane.YAxis.IsVisible = true;
+            pane.YAxis.MajorTic.IsBetweenLabels = true;
+
+            PointPairList Y = new PointPairList();
+            Y.Add(0, -10);
+            Y.Add(0, 10);
+            LineItem lineY = pane.AddCurve("", Y, System.Drawing.Color.Black, SymbolType.None);
+
+            zedGraphControl1.AxisChange();
+            zedGraphControl1.Invalidate();
+        }
+
+        public double F2(double x)
+        {
+            if (Math.Pow(x, 2) - 1 < 0)
+            {
+                throw new ArgumentOutOfRangeException("Подкоренное выражение не может быть отрицательным. Значение x должно быть либо меньше -1, либо больше 1.");
+            }
+
+            if (x == 0)
+            {
+                throw new DivideByZeroException("Знаменатель не может быть равен нулю.");
+            }
+
+            double denominator = Math.Sqrt((Math.Pow(x, 2)) - 1) * Math.Pow(((2 * Math.Pow(x, 2)) - 1), 2);
+            double numerator = 2 * Math.Pow(x, 5) - 3 * Math.Pow(x, 3) + 2 * x;
+
+            return numerator / denominator;
+        }
+
+        public double F1(double x)
+        {
+            double denominator = 2 * Math.Pow(x, 2) - 1;
+            double underRoot = Math.Pow(x, 2) - 1;
+            if (denominator == 0)
+            {
+                throw new DivideByZeroException("Знаменатель не может быть равен нулю.");
+            }
+            if (underRoot < 0)
+            {
+                throw new ArgumentOutOfRangeException("Подкоренное выражение не может быть отрицательным.");
+            }
+
+            return (Math.Pow(x, 2) * Math.Sqrt(underRoot)) / denominator;
+        }
+    }
+}
