@@ -1,0 +1,809 @@
+Program.cs
+
+using laba2;
+using Program;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WindowsFormsApplication1_1
+{
+    static class Program
+    {
+        /// <summary>
+        /// Главная точка входа для приложения.
+        /// </summary>
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Form1());
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+Form1.cs
+
+using System;
+using ZedGraph;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using laba2;
+using static System.Windows.Forms.DataFormats;
+using CircleGraph;
+
+namespace Program
+{
+    public partial class Form1 : Form
+    {
+        private float minx, maxx, miny, maxy, W, H, W1, H1, dx, dy, h;
+        private bool drawSecondGraph = false;
+
+        //координаты
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            double x = (e.X - W1) / dx;
+            double y = (H1 - e.Y) / dy;
+            string text = string.Format("X: {0};    Y: {1}", x, y);
+            label1.Text = text;
+        }
+
+        public Form1()
+        {
+            InitializeComponent();
+            pictureBox1.MouseClick += pictureBox1_MouseClick;
+            pictureBox1.Paint += pictureBox1_Paint;
+        }
+
+        //функция
+        public double F1(double x)
+        {
+            double denominator = 2 * Math.Pow(x, 2) - 1;
+            double underRoot = Math.Pow(x, 2) - 1;
+            if (denominator == 0)
+            {
+                throw new DivideByZeroException("Знаменатель не может быть равен нулю.");
+
+            }
+            if (underRoot < 0)
+            {
+                throw new ArgumentOutOfRangeException("Подкоренное выражение не может быть отрицательным.");
+            }
+
+            return (Math.Pow(x, 2) * Math.Sqrt(underRoot)) / denominator;
+        }
+
+        //производная
+        public double F2(double x)
+        {
+            if (Math.Pow(x, 2) - 1 < 0)
+            {
+                throw new ArgumentOutOfRangeException("Подкоренное выражение не может быть отрицательным. Значение x должно быть либо меньше -1, либо больше 1.");
+            }
+            if (x == 0)
+            {
+                throw new DivideByZeroException("Знаменатель не может быть равен нулю.");
+            }
+            double denominator = Math.Sqrt((Math.Pow(x, 2)) - 1) * Math.Pow(((2 * Math.Pow(x, 2)) - 1), 2);
+            double numerator = 2 * Math.Pow(x, 5) - 3 * Math.Pow(x, 3) + 2 * x;
+            return numerator / denominator;
+        }
+
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            drawSecondGraph = !drawSecondGraph;
+            pictureBox1.Invalidate();
+        }
+
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        {
+            // Оси X и Y
+            e.Graphics.DrawLine(Pens.Black, W1, 0, W1, H);
+            e.Graphics.DrawLine(Pens.Black, 0, H1, W, H1);
+
+            // Подпись
+            Font font = new Font("Arial", 9, FontStyle.Regular);
+            Brush brush = Brushes.Black;
+            e.Graphics.DrawString("X", font, brush, W - 15, H1 + 10);
+            e.Graphics.DrawString("Y", font, brush, W1 - 20, 10);
+            e.Graphics.DrawString("Розовый цвет - график функции F1", font, brush, W1 + 180, 10);
+            e.Graphics.DrawString("Синий цвет - график её производной F2", font, brush, W1 + 180, 30);
+
+            // Линейка
+            Font fontSmall = new Font("Arial", 6, FontStyle.Regular);
+            for (int i = (int)miny; i <= maxy; i++)
+            {
+                e.Graphics.DrawLine(Pens.Black, W1 - 1, H1 + dy * i, W1 + 1, H1 + dy * i);
+                e.Graphics.DrawString((-(float)(i)).ToString(), fontSmall, brush, W1 - 15, H1 + dy * i);
+            }
+            for (int i = (int)minx; i <= maxx; i++)
+            {
+                e.Graphics.DrawLine(Pens.Black, W1 + dx * i, H1 + 1, W1 + dx * i, H1 - 1);
+                if (i != 0)
+                    e.Graphics.DrawString(i.ToString(), fontSmall, brush, W1 + dx * i - 10, H1 + 10);
+            }
+
+            // Отрисовка графика
+            if (drawSecondGraph)
+            {
+                DrawGraph(e.Graphics, F2, Pens.Blue, minx, maxx, h);
+            }
+            else
+            {
+                DrawGraph(e.Graphics, F1, Pens.DeepPink, minx, maxx, h);
+            }
+
+            FindAndDisplayRoots();
+        }
+
+        private void FindAndDisplayRoots()
+        {
+            string rootsText = "Нули функции F1:\n";
+            rootsText += FindRoots(F1, minx, maxx) + "\n";
+            rootsText += "Нули производной F2:\n";
+            rootsText += FindRoots(F2, minx, maxx) + "\n";
+            textBoxRoots.Text = rootsText;
+        }
+
+        private string FindRoots(Func<double, double> function, double minX, double maxX)
+        {
+            string roots = "";
+            double tolerance = 0.01; 
+            double step = 0.1;
+
+            for (double x = minX; x < -1; x += step)
+            {
+                try
+                {
+                    double y = function(x);
+                    if (Math.Abs(y) < tolerance)
+                    {
+                        roots += $"x = {x:F2}\n;    ";
+                    }
+                }
+                catch (DivideByZeroException ex)
+                {
+                    Console.WriteLine($"Пропущено значение x = {x:F2}: {ex.Message}");
+                }
+                catch (ArgumentOutOfRangeException ex)
+                {
+                    Console.WriteLine($"Пропущено значение x = {x:F2}: {ex.Message}");
+                }
+            }
+            for (double x = 1; x <= maxX; x += step)
+            {
+                try
+                {
+                    double y = function(x);
+                    if (Math.Abs(y) < tolerance)
+                    {
+                        roots += $"x = {x:F2}\n;     ";
+                    }
+                }
+                catch (DivideByZeroException ex)
+                {
+                    Console.WriteLine($"Пропущено значение x = {x:F2}: {ex.Message}");
+                }
+                catch (ArgumentOutOfRangeException ex)
+                {
+                    Console.WriteLine($"Пропущено значение x = {x:F2}: {ex.Message}");
+                }
+            }
+            return string.IsNullOrEmpty(roots) ? "Нет нулей" : roots;
+        }
+
+
+        private void DrawGraph(Graphics g, Func<double, double> function, Pen pen, float minX, float maxX, float step)
+        {
+            //x < -1
+            for (float ix = minX; ix < -1; ix += step)
+            {
+                float y1;
+                try
+                {
+                    y1 = (float)function(ix);
+                    if (ix != minX)
+                    {
+                        g.DrawLine(pen, W1 + (ix - step) * dx, H1 - (float)function(ix - step) * dy, W1 + ix * dx, H1 - y1 * dy);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    continue;
+                }
+            }
+
+            //x > 1
+            for (float ix = 1; ix <= maxX; ix += step)
+            {
+                float y1;
+                try
+                {
+                    y1 = (float)function(ix);
+                    g.DrawLine(pen, W1 + (ix - step) * dx, H1 - (float)function(ix - step) * dy, W1 + ix * dx, H1 - y1 * dy);
+                }
+                catch (Exception ex)
+                {
+                    continue;
+                }
+            }
+        }
+
+
+        private void buttonOpenGraph2_Click(object sender, EventArgs e)
+        {
+            ZG_graph graphForm = new ZG_graph();
+            graphForm.Show();
+        }
+
+        private void buttonOpenForm2_Click(object sender, EventArgs e)
+        {
+            Form2 form2 = new Form2();
+            form2.Show();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            W = pictureBox1.Width;
+            H = pictureBox1.Height;
+            W1 = W / 2;
+            H1 = H / 2;
+            miny = -10;
+            maxy = 10;
+            minx = -10;
+            maxx = 10;
+            h = 0.001f;
+            dx = W / (maxx - minx);
+            dy = H / (maxy - miny);
+
+            Button buttonOpenGraph2 = new Button
+            {
+                Text = "Открыть второй график",
+                Dock = DockStyle.Top
+            };
+            buttonOpenGraph2.Click += buttonOpenGraph2_Click;
+            Controls.Add(buttonOpenGraph2);
+
+            Button buttonOpenGraph3 = new Button
+            {
+                Text = "Открыть третий график",
+                Dock = DockStyle.Top
+            };
+            buttonOpenGraph3.Click += buttonOpenForm2_Click;
+            Controls.Add(buttonOpenGraph3);
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Form1.Designer.cs
+
+namespace Program
+{
+    partial class Form1
+    {
+        private System.ComponentModel.IContainer components = null;
+        private PictureBox pictureBox1;
+        private Label label1;
+        private TextBox textBoxRoots;
+        private System.Windows.Forms.Button buttonOpenForm2;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            textBoxRoots = new TextBox();
+            pictureBox1 = new PictureBox();
+            label1 = new Label();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            SuspendLayout();
+            // 
+            // textBoxRoots
+            // 
+            textBoxRoots.Dock = DockStyle.Bottom;
+            textBoxRoots.Location = new Point(0, 27);
+            textBoxRoots.Multiline = true;
+            textBoxRoots.Name = "textBoxRoots";
+            textBoxRoots.ReadOnly = true;
+            textBoxRoots.ScrollBars = ScrollBars.Vertical;
+            textBoxRoots.Size = new Size(211, 84);
+            textBoxRoots.TabIndex = 0;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Dock = DockStyle.Fill;
+            pictureBox1.Location = new Point(0, 0);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(800, 450);
+            pictureBox1.TabIndex = 0;
+            pictureBox1.TabStop = false;
+            pictureBox1.Click += pictureBox1_Click;
+            pictureBox1.Paint += pictureBox1_Paint;
+            pictureBox1.MouseMove += pictureBox1_MouseMove;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(12, 9);
+            label1.Name = "label1";
+            label1.Size = new Size(51, 15);
+            label1.TabIndex = 1;
+            label1.Text = "X: 0; Y: 0";
+            // 
+            // Form1
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Controls.Add(textBoxRoots);
+            Controls.Add(label1);
+            Controls.Add(pictureBox1);
+            Name = "Form1";
+            Text = "Graph Plotter";
+            Load += Form1_Load;
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
+            //
+            //Form2
+            //
+            this.buttonOpenForm2 = new System.Windows.Forms.Button();
+            this.buttonOpenForm2.Location = new System.Drawing.Point(12, 12);
+            this.buttonOpenForm2.Name = "buttonOpenForm2";
+            this.buttonOpenForm2.Size = new System.Drawing.Size(100, 23);
+            this.buttonOpenForm2.TabIndex = 5;
+            this.buttonOpenForm2.Text = "Открыть форму 2";
+            this.buttonOpenForm2.UseVisualStyleBackColor = true;
+            this.buttonOpenForm2.Click += new System.EventHandler(this.buttonOpenForm2_Click);
+            this.Controls.Add(this.buttonOpenForm2);
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Form2.cs
+
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using ZedGraph;
+
+namespace CircleGraph
+{
+    public partial class Form2 : Form
+    {
+        public Form2()
+        {
+            InitializeComponent();
+            DrawCircleAndArea();
+        }
+
+        private void DrawCircleAndArea()
+        {
+            var myPane = zedGraphControl1.GraphPane;
+
+            myPane.Title.Text = "Круг и область пересечения";
+            myPane.XAxis.Title.Text = "X";
+            myPane.YAxis.Title.Text = "Y";
+
+            // Параметры круга
+            double radius = 1.4142; 
+            double centerX = 0.5; 
+            double centerY = 0.5; 
+
+            
+            PointPairList circlePoints = new PointPairList();
+            for (double angle = 0; angle < 2 * Math.PI; angle += 0.01)
+            {
+                double x = centerX + radius * Math.Cos(angle);
+                double y = centerY + radius * Math.Sin(angle);
+                circlePoints.Add(x, y);
+            }
+
+
+            for (double y = centerY - radius; y <= centerY + radius; y += 0.01)
+            {
+                double xMax = Math.Sqrt(radius * radius - (y - centerY) * (y - centerY));
+                double xMin = -xMax;
+
+                PointPairList fillCirclePoints = new PointPairList
+                {
+                    new PointPair(xMin + centerX, y),
+                    new PointPair(xMax + centerX, y)
+                };
+                myPane.AddCurve("", fillCirclePoints, Color.FromArgb(100, Color.Blue), SymbolType.None);
+            }
+            myPane.AddCurve("Круг", circlePoints, Color.Blue, SymbolType.None);
+
+
+            PointPairList squarePoints = new PointPairList
+            {
+                new PointPair(0, 0),
+                new PointPair(1, 0),
+                new PointPair(1, 1),
+                new PointPair(0, 1),
+                new PointPair(0, 0)
+            };
+
+            
+            for (double y = 0; y <= 1; y += 0.02)
+            {
+                PointPairList fillSquarePoints = new PointPairList
+                {
+                    new PointPair(0, y),
+                    new PointPair(1, y)
+                };
+                myPane.AddCurve("", fillSquarePoints, Color.FromArgb(100, Color.Red), SymbolType.None);
+            }
+            myPane.AddCurve("Область", squarePoints, Color.Red, SymbolType.None);
+
+
+            double minValue = -2;
+            double maxValue = 2;
+
+            myPane.XAxis.Scale.Min = minValue;
+            myPane.XAxis.Scale.Max = maxValue;
+
+            myPane.YAxis.Scale.Min = minValue;
+            myPane.YAxis.Scale.Max = maxValue;
+
+            myPane.XAxis.Scale.MajorStep = 1;
+            myPane.YAxis.Scale.MajorStep = 1;
+
+
+            zedGraphControl1.AxisChange();
+            zedGraphControl1.Invalidate();
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Form2.Designer.cs
+
+namespace CircleGraph
+{
+    partial class Form2
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
+            this.SuspendLayout();
+            // zedGraphControl1
+            this.zedGraphControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.zedGraphControl1.Location = new System.Drawing.Point(0, 0);
+            this.zedGraphControl1.Name = "zedGraphControl1";
+            this.zedGraphControl1.Size = new System.Drawing.Size(800, 450);
+            this.zedGraphControl1.TabIndex = 0;
+            // Form2
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 8F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.zedGraphControl1);
+            this.Name = "Form2";
+            this.Text = "Круг и Область Пересечения";
+            this.ResumeLayout(false);
+        }
+
+        private ZedGraph.ZedGraphControl zedGraphControl1;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ZG_graph.cs
+
+using System;
+using ZedGraph;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace laba2
+{
+    public partial class ZG_graph : Form
+    {
+        public ZG_graph()
+        {
+            InitializeComponent();
+            LoadGraph();
+        }
+
+        private void LoadGraph()
+        {
+            double minX = -10, maxX = 10, step = 0.0001;
+            GraphPane pane = zedGraphControl1.GraphPane;
+            pane.Title.Text = "Графики F1 и F2";
+            pane.XAxis.Title.Text = "X";
+            pane.YAxis.Title.Text = "Y";
+
+            PointPairList pointsF1 = new PointPairList();
+            PointPairList pointsF2 = new PointPairList();
+
+            for (double x = minX; x < -1; x += step)
+            {
+                try
+                {
+                    double yF2 = F2(x);
+                    pointsF2.Add(x, yF2);
+
+                    double yF1 = F1(x);
+                    pointsF1.Add(x, yF1);
+                }
+                catch (Exception ex)
+                {
+                    continue;
+                }
+            }
+
+            for (double x = 1; x <= maxX; x += step)
+            {
+                try
+                {
+                    double yF2 = F2(x);
+                    pointsF2.Add(x, yF2);
+
+                    double yF1 = F1(x);
+                    pointsF1.Add(x, yF1);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ошибка при вычислении функции для x = {x}: {ex.Message}");
+                }
+            }
+            LineItem curveF1 = pane.AddCurve("F1(x)", pointsF1, System.Drawing.Color.Red, SymbolType.None);
+            LineItem curveF2 = pane.AddCurve("F2(x)", pointsF2, System.Drawing.Color.Blue, SymbolType.None);
+
+            pane.XAxis.Scale.Min = minX;
+            pane.XAxis.Scale.Max = maxX;
+            pane.YAxis.Scale.Min = -10;
+            pane.YAxis.Scale.Max = 10;
+
+
+            pane.YAxis.IsVisible = true;
+            pane.YAxis.MajorTic.IsBetweenLabels = true;
+
+            PointPairList Y = new PointPairList();
+            Y.Add(0, -10);
+            Y.Add(0, 10);
+            LineItem lineY = pane.AddCurve("", Y, System.Drawing.Color.Black, SymbolType.None);
+
+            zedGraphControl1.AxisChange();
+            zedGraphControl1.Invalidate();
+        }
+
+        public double F2(double x)
+        {
+            if (Math.Pow(x, 2) - 1 < 0)
+            {
+                throw new ArgumentOutOfRangeException("Подкоренное выражение не может быть отрицательным. Значение x должно быть либо меньше -1, либо больше 1.");
+            }
+
+            if (x == 0)
+            {
+                throw new DivideByZeroException("Знаменатель не может быть равен нулю.");
+            }
+
+            double denominator = Math.Sqrt((Math.Pow(x, 2)) - 1) * Math.Pow(((2 * Math.Pow(x, 2)) - 1), 2);
+            double numerator = 2 * Math.Pow(x, 5) - 3 * Math.Pow(x, 3) + 2 * x;
+
+            return numerator / denominator;
+        }
+
+        public double F1(double x)
+        {
+            double denominator = 2 * Math.Pow(x, 2) - 1;
+            double underRoot = Math.Pow(x, 2) - 1;
+            if (denominator == 0)
+            {
+                throw new DivideByZeroException("Знаменатель не может быть равен нулю.");
+            }
+            if (underRoot < 0)
+            {
+                throw new ArgumentOutOfRangeException("Подкоренное выражение не может быть отрицательным.");
+            }
+
+            return (Math.Pow(x, 2) * Math.Sqrt(underRoot)) / denominator;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ZG_graph.Designer.cs
+
+namespace laba2
+{
+    partial class ZG_graph
+    {
+        private System.ComponentModel.IContainer components = null;
+        private ZedGraph.ZedGraphControl zedGraphControl1;
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+        private void InitializeComponent()
+        {
+            this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
+            this.SuspendLayout();
+            // zedGraphControl1
+            this.zedGraphControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.zedGraphControl1.Location = new System.Drawing.Point(0, 0);
+            this.zedGraphControl1.Name = "zedGraphControl1";
+            this.zedGraphControl1.Size = new System.Drawing.Size(800, 450); // Установите размер формы по вашему усмотрению
+            this.zedGraphControl1.TabIndex = 0;
+            // ZG_graph
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 450); // Установите размер формы по вашему усмотрению
+            this.Controls.Add(this.zedGraphControl1);
+            this.Name = "ZG_graph";
+            this.Text = "График F2";
+            this.ResumeLayout(false);
+        }
+    }
+}
+
+
