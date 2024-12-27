@@ -1,0 +1,42 @@
+﻿#pragma once
+#include <string>
+
+enum class TokenType
+{
+    TYPE,
+    CONST,
+    ID,
+    OP,
+    DELIMITER,
+    DO,
+    WHILE,
+    CONDITION,
+    RELATION_OPERATOR,
+    ERROR,
+    UNKNOWN
+};
+
+class Token
+{
+public:
+    TokenType type;
+    std::string lexeme;
+    int hash;
+
+    Token()
+    {
+        type = TokenType::UNKNOWN;
+        lexeme = "";
+        hash = 0;
+    }
+
+    Token(TokenType type_, const std::string& lex, int hash_)
+    {
+        type = type_;
+        lexeme = lex;
+        hash = hash_;
+    }
+
+    std::string get_typeof_token();
+
+};
