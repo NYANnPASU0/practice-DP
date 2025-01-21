@@ -13,7 +13,8 @@ enum class TokenType
     CONDITION,
     RELATION_OPERATOR,
     ERROR,
-    UNKNOWN
+    UNKNOWN,
+    END_OF_FILE
 };
 
 class Token
@@ -38,5 +39,4 @@ public:
     }
 
     std::string get_typeof_token();
-
 };

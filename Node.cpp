@@ -1,0 +1,49 @@
+﻿#include "Node.h"
+
+void Node::print_to_console(const std::shared_ptr<Node>& node, int count)
+{
+    for (int i = 0; i < count; i++)
+    {
+        std::cout << "   ";
+    }
+    std::cout << node-> get_name();
+    if (node->get_token().type != TokenType::END_OF_FILE)
+    {
+        std::string tmp = node->get_token().lexeme;
+        if (tmp == "(" || tmp == ")") tmp = "bracket"; //обычная скобка 
+        if (tmp == "{" || tmp == "}") tmp = "brace"; //фигурная скобка
+        if (tmp == "," || tmp == ";") tmp = "separator"; //разделитель
+        if (tmp == "+" || tmp == "-") tmp = "arithmetic op";
+        if (tmp.size() > 0) std::cout << "    (" << tmp << ") ";
+    }
+    std::cout << std::endl;
+    std::vector<std::shared_ptr<Node>> children = node->get_vect_child();
+    for (int i = 0; i < children.size(); ++i)
+    {
+        print_to_console(children[i], count + 1);
+    }
+}
+
+void Node::print_to_file(const std::shared_ptr<Node>& node, int count, std::ofstream& output)
+{
+    for (int i = 0; i < count; i++)
+    {
+        output << "   ";
+    }
+    output << node-> get_name();
+    if (node->get_token().type != TokenType::END_OF_FILE)
+    {
+        std::string tmp = node->get_token().lexeme;
+        if (tmp == "(" || tmp == ")") tmp = "Scob";
+        if (tmp == "{" || tmp == "}") tmp = "Brace";
+        if (tmp == "," || tmp == ";") tmp = "Separ";
+        if (tmp == "+" || tmp == "-") tmp = "ArOp";
+        if (tmp.size() > 0) output << "   (" << tmp << ") ";
+    }
+    output << std::endl;
+    std::vector<std::shared_ptr<Node>> children = node->get_vect_child();
+    for (int i = 0; i < children.size(); i++)
+    {
+        print_to_file(children[i], count + 1, output);
+    }
+}

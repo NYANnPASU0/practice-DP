@@ -7,23 +7,37 @@ std::string Token::get_typeof_token()
     {
     case TokenType::OP:
         return "OP";
+        break;
     case TokenType::TYPE:
         return "TYPE";
+        break;
     case TokenType::CONST:
         return "CONST";
+        break;
     case TokenType::DO:
         return "DO";
-    case TokenType::WHILE: 
-        "WHILE";
+        break;
+    case TokenType::WHILE:
+        return "WHILE";
+        break;
     case TokenType::DELIMITER:
         return "DELIMITER";
+        break;
     case TokenType::ID:
         return "ID";
+        break;
     case TokenType::RELATION_OPERATOR:
         return"RELATION_OPERATOR";
+        break;
     case TokenType::ERROR:
         return "ERROR";
-    default: return "UNKNOWN";
+        break;
+    case TokenType::END_OF_FILE:
+        tokenType = "END_OF_FILE";
+        break;
+    default:
+        return "UNKNOWN";
+        break;
     }
 }
 

@@ -2,55 +2,70 @@
 #include <iostream>
 #include <vector>
 
-
-std::vector<std::string> words = { "int", "do" , "while", "return" };
-
+std::vector <std::string> keywords = { "int", "do" , "while", "return" };
 
 Token Lexer::keyword(const std::string& lex)
 {
     std::string lex_ = "";
 
-    int index = 0;
-    int indexKey = 0;
+    int ind = 0;
+    int ind_keyword = 0;
     int count = 0;
 
 
     if (lex[0] == 'i')
     {
-        indexKey = 0;
+        ind_keyword = 0;
     }
     else if (lex[0] == 'd')
     {
-        indexKey = 1;
+        ind_keyword = 1;
     }
     else if (lex[0] == 'w')
     {
-        indexKey = 2;
+        ind_keyword = 2;
+    }
+    else if (lex[0] == 'r')
+    {
+        ind_keyword = 3;
     }
     for (int i = 0; i < lex.size(); i++)
     {
-        char elem = lex[i]; 
+        char elem = lex[i];
         lex_ += elem;
-        if (index >= words[indexKey].size())
+        if (ind >= keywords[ind_keyword].size())
         {
-            break; 
+            break;
         }
-        if (elem == words[indexKey][index])
+        if (elem == keywords[ind_keyword][ind])
         {
-            count++; 
-            index++; 
+            count++;
+            ind++;
         }
     }
-
-    if (count == words[indexKey].size())
+    if (count == keywords[ind_keyword].size())
     {
-        if (indexKey == 0)
+        if (ind_keyword == 0)
         {
-            return Token(TokenType::TYPE, lex, 0);
+            if (lex.size() == count)
+            {
+                return Token(TokenType::TYPE, lex, 0);
+            }
+            else
+            {
+                return Token(TokenType::UNKNOWN, lex, 0);
+            }
         }
         else
         {
-            return Token(TokenType::OP, lex, 0);   
+            if (lex.size() == count)
+            {
+                return Token(TokenType::OP, lex, 0);
+            }
+            else
+            {
+                return Token(TokenType::UNKNOWN, lex, 0);
+            }
         }
     }
     else
@@ -58,7 +73,6 @@ Token Lexer::keyword(const std::string& lex)
         return Token(TokenType::UNKNOWN, lex, 0);
     }
 }
-
 
 void Lexer::analyze()
 {
@@ -76,14 +90,12 @@ void Lexer::analyze()
     }
 }
 
-
-
 bool Lexer::check_id(const std::string& lexeme) const
 {
     for (size_t i = 0; i < lexeme.length(); i++)
     {
         char elem = lexeme[i];
-        if (!isalpha(elem))                     
+        if (!isalpha(elem))
         {
             return false;
         }
@@ -91,27 +103,25 @@ bool Lexer::check_id(const std::string& lexeme) const
     return true;
 }
 
-
 bool Lexer::ARITHM_OP(char& elem) const
 {
     return (elem == '+' || elem == '-' || elem == '=');
 }
 
-
 bool Lexer::RELATION_OP(const std::string& elem) const
 {
-    return (elem == ">" || elem == "<" || elem == "<=" || elem == ">=" || elem == "==" || elem == "!=");
+    return (elem == ">" || elem == "<" || elem == "<=" || elem == ">=" || elem == "==" || elem == "!=" || elem == "=");
 }
 
-
+bool Lexer::RELATION_OP(const char& elem) const
+{
+    return (elem == '>' || elem == '<' || elem == '=');
+}
 
 bool Lexer::DELIMITER(const char elem) const
 {
     return (elem == ')' || elem == '(' || elem == ',' || elem == ';' || elem == '{' || elem == '}');
 }
-
-
-
 
 Token Lexer::get_next_token()
 {
@@ -131,9 +141,6 @@ Token Lexer::get_next_token()
     return Token(TokenType::UNKNOWN, "", 0);
 }
 
-
-
-
 Token Lexer::check_char_el(char elem)
 {
     if (isalpha(elem))
@@ -150,15 +157,52 @@ Token Lexer::check_char_el(char elem)
     }
     else if (ARITHM_OP(elem))
     {
-        return Token(TokenType::OP, std::string(1, elem), 0);
+        char next_el;
+        if (input_file.get(next_el))
+        {
+            if (elem == '=')
+            {
+                std::string whish_operator = std::string(1, elem) + next_el;
+                if (whish_operator == "==")
+                {
+                    return Token(TokenType::RELATION_OPERATOR, std::string(1, elem) + next_el, 0);
+                }
+                else
+                {
+                    return Token(TokenType::OP, std::string(1, elem), 0);
+                }
+            }
+            else
+            {
+                return Token(TokenType::OP, std::string(1, elem), 0);
+            }
+        }
     }
-    else if (RELATION_OP(std::string(1, elem)))
+    else if (elem == '>' || elem == '!' || elem == '<')
     {
-        return Token(TokenType::RELATION_OPERATOR, std::string(1, elem), 0);
+        char next_el;
+        if (input_file.get(next_el))
+        {
+            if (elem == '=')
+            {
+                return Token(TokenType::RELATION_OPERATOR, std::string(1, elem) + next_el, 0);
+            }
+            else
+            {
+                if (next_el == '=')
+                {
+                    return Token(TokenType::RELATION_OPERATOR, std::string(1, elem) + next_el, 0);
+                }
+                else
+                {
+                    input_file.unget();
+                    return Token(TokenType::RELATION_OPERATOR, std::string(1, elem), 0);
+                }
+            }
+        }
     }
     return check_unknown(elem);
 }
-
 
 Token Lexer::check_ID_el(char elem)
 {
@@ -168,6 +212,10 @@ Token Lexer::check_ID_el(char elem)
         lexeme += elem;
     }
     input_file.unget();
+    if (!isalpha(lexeme[0]))
+    {
+        return Token(TokenType::UNKNOWN, lexeme, 0);
+    }
     Token a = keyword(lexeme);
     if (a.type == TokenType::UNKNOWN)
     {
@@ -204,6 +252,10 @@ Token Lexer::check_num_el(char elem)
         }
         lexeme += elem;
     }
+    if (lexeme[0] == '0' && lexeme.size() > 1)
+    {
+        return Token(TokenType::ERROR, lexeme, 0);
+    }
     input_file.unget();
     if (!double_num)
     {
@@ -218,7 +270,6 @@ Token Lexer::check_num_el(char elem)
 Token Lexer::check_unknown(char elem)
 {
     std::string lexeme(1, elem);
-
     while (input_file.get(elem) && !isspace(elem) && !DELIMITER(elem))
     {
         lexeme += elem;
@@ -226,7 +277,3 @@ Token Lexer::check_unknown(char elem)
     input_file.unget();
     return Token(TokenType::ERROR, lexeme, 0);
 }
-
-
-
-

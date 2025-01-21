@@ -2,21 +2,23 @@
                 ID        |       main        |         41
          DELIMITER        |          )        |         42
                 OP        |          +        |         43
+         DELIMITER        |          ,        |         44
                 OP        |          -        |         45
+                OP        |     return        |         46
              CONST        |          0        |         48
-             CONST        |          1        |         49
-             CONST        |          2        |         50
+             CONST        |          4        |         52
+             CONST        |          5        |         53
          DELIMITER        |          ;        |         59
                 OP        |          =        |         61
  RELATION_OPERATOR        |          >        |         62
+             CONST        |        100        |         73
                 ID        |          a        |         97
-                ID        |          c        |         99
+                ID        |          b        |         98
+                ID        |          i        |        105
+                ID        |          q        |        113
          DELIMITER        |          {        |        123
          DELIMITER        |          }        |        125
               TYPE        |        int        |        191
                 OP        |         do        |        411
                 OP        |      while        |        577
-                ID        |     aqefqe        |        829
 
-             ERROR        |        5.0        |        143
-             ERROR        |         c1        |        326

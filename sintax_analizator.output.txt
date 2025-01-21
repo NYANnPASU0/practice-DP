@@ -1,0 +1,71 @@
+Function
+   Begin
+      Type   (int) 
+      FunctionName   (main) 
+      {   (Brace) 
+   Descriptions
+      Descr
+         Type   (int) 
+         VarList
+            Id   (q) 
+         ;   (Separ) 
+      Descr
+         Type   (int) 
+         VarList
+            Id   (a) 
+            ,   (Separ) 
+            VarList
+               Id   (b) 
+               ,   (Separ) 
+               VarList
+                  Id   (i) 
+         ;   (Separ) 
+   Operators
+      Op
+         Id   (b) 
+         =   (=) 
+         SimpleExpr   (100) 
+         ;   (Separ) 
+      Op
+         Id   (i) 
+         =   (=) 
+         SimpleExpr   (4) 
+         ;   (Separ) 
+      Op
+         Id   (q) 
+         =   (=) 
+         Expr
+            SimpleExpr   (i) 
+            +   (ArOp) 
+            SimpleExpr   (5) 
+         ;   (Separ) 
+      Op
+         do   (do) 
+         {   (Brace) 
+         Operators
+            Op
+               Id   (i) 
+               =   (=) 
+               Expr
+                  SimpleExpr   (100) 
+                  -   (ArOp) 
+                  SimpleExpr   (a) 
+               ;   (Separ) 
+         }   (Brace) 
+         while   (while) 
+         (   (Scob) 
+         Condition
+            SimpleExpr   (a) 
+            RelationsOperators   (>) 
+            SimpleExpr   (0) 
+         )   (Scob) 
+      Op
+         Id   (a) 
+         =   (=) 
+         SimpleExpr   (4) 
+         ;   (Separ) 
+   End
+      return   (return) 
+      Id   (a) 
+      ;   (Separ) 
+      }
