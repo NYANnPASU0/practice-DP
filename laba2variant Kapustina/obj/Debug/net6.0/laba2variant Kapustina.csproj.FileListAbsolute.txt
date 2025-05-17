@@ -1,0 +1,14 @@
+C:\Users\Лиза\Desktop\laba2variant Kapustina\bin\Debug\net6.0\laba2variant Kapustina.exe
+C:\Users\Лиза\Desktop\laba2variant Kapustina\bin\Debug\net6.0\laba2variant Kapustina.deps.json
+C:\Users\Лиза\Desktop\laba2variant Kapustina\bin\Debug\net6.0\laba2variant Kapustina.runtimeconfig.json
+C:\Users\Лиза\Desktop\laba2variant Kapustina\bin\Debug\net6.0\laba2variant Kapustina.dll
+C:\Users\Лиза\Desktop\laba2variant Kapustina\bin\Debug\net6.0\laba2variant Kapustina.pdb
+C:\Users\Лиза\Desktop\laba2variant Kapustina\obj\Debug\net6.0\laba2variant Kapustina.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Лиза\Desktop\laba2variant Kapustina\obj\Debug\net6.0\laba2variant Kapustina.AssemblyInfoInputs.cache
+C:\Users\Лиза\Desktop\laba2variant Kapustina\obj\Debug\net6.0\laba2variant Kapustina.AssemblyInfo.cs
+C:\Users\Лиза\Desktop\laba2variant Kapustina\obj\Debug\net6.0\laba2variant Kapustina.csproj.CoreCompileInputs.cache
+C:\Users\Лиза\Desktop\laba2variant Kapustina\obj\Debug\net6.0\laba2variant Kapustina.dll
+C:\Users\Лиза\Desktop\laba2variant Kapustina\obj\Debug\net6.0\refint\laba2variant Kapustina.dll
+C:\Users\Лиза\Desktop\laba2variant Kapustina\obj\Debug\net6.0\laba2variant Kapustina.pdb
+C:\Users\Лиза\Desktop\laba2variant Kapustina\obj\Debug\net6.0\laba2variant Kapustina.genruntimeconfig.cache
+C:\Users\Лиза\Desktop\laba2variant Kapustina\obj\Debug\net6.0\ref\laba2variant Kapustina.dll
