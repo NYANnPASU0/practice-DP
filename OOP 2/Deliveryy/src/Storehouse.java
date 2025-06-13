@@ -6,19 +6,18 @@ public class Storehouse
     private Supplier supplier;
     private final List<Storekeeper> storekeepers = new ArrayList<>();
     private final List<Courier> couriers = new ArrayList<>();
-    private final List<Order> pendingOrders = new ArrayList<>();
+    private final List<Order> acceptingOrders = new ArrayList<>();
     private final List<Integer> location = Arrays.asList(50, 50);
 
     public Storehouse(Map<Product, Integer> stock)
     {
         this.stock = stock;
-        System.out.println("Склад работает.");
     }
 
     public void setSupplier(Supplier supplier)
     {
         this.supplier = supplier;
-        System.out.println("Поставщик назначен для склада.");
+        System.out.println("Поставщик назначен.");
     }
 
     public void addEmployee(Employee employee)
@@ -26,25 +25,25 @@ public class Storehouse
         if (employee instanceof Storekeeper)
         {
             storekeepers.add((Storekeeper) employee);
-            System.out.println("Добавлен сборщик: " + employee.getName());
+            System.out.println("Назначен сборщик: " + employee.getName());
         }
         else if (employee instanceof Courier)
         {
             couriers.add((Courier) employee);
-            System.out.println("Добавлен курьер: " + employee.getName());
+            System.out.println("Назначен курьер: " + employee.getName());
         }
     }
 
     public void processOrder(Order order)
     {
         System.out.printf("Получен заказ #%d\n", order.getId());
-        pendingOrders.add(order);
+        acceptingOrders.add(order);
         processPendingOrders();
     }
 
     private void processPendingOrders()
     {
-        for (Order order : new ArrayList<>(pendingOrders))
+        for (Order order : new ArrayList<>(acceptingOrders))
         {
             System.out.printf("Обработка заказа #%d\n", order.getId());
 
@@ -74,23 +73,24 @@ public class Storehouse
                 }
                 if (!found)
                 {
-                    System.out.printf("  Товар с ID=%d не найден в каталоге\n", productId);
+                    System.out.printf("  Товар с ID=%d не найден \n", productId);
                 }
             }
 
             int addedItems = 0;
-            for (int i : actualItems.values())
+            Integer[] actual1 = actualItems.values().toArray(new Integer[0]);
+            for (int i = 0; i < actual1.length; i++)
             {
-                addedItems += i;
+                addedItems += actual1[i];
             }
 
             int missingItemsCount = 0;
-            for (int i : missingItems.values())
+            Integer[] actual2 = missingItems.values().toArray(new Integer[0]);
+            for (int i = 0; i < actual2.length; i++)
             {
-                missingItemsCount += i;
+                missingItemsCount += actual2[i];
             }
 
-            System.out.printf("  В заказ #%d добавлено %d товаров\n", order.getId(), addedItems);
             if (missingItemsCount > 0)
             {
                 System.out.printf("  Для заказа #%d не хватило %d товаров\n", order.getId(), missingItemsCount);
@@ -101,17 +101,17 @@ public class Storehouse
 
             if (!missingItems.isEmpty())
             {
-                System.out.printf("Заказ недостающих товаров для заказа #%d: %s\n",
-                        order.getId(), formatProductMap(missingItems));
+                System.out.printf("Заказ недостающих товаров для заказа #%d: \n",
+                        order.getId());
                 supplier.deliver(missingItems);
             }
 
-            assignToStorekeeper(order);
-            pendingOrders.remove(order);
+            freeStorekeepers(order);
+            acceptingOrders.remove(order);
         }
     }
 
-    private void assignToStorekeeper(Order order)
+    private void freeStorekeepers(Order order)
     {
         for (Storekeeper storekeeper : storekeepers)
         {
@@ -123,10 +123,10 @@ public class Storehouse
                 return;
             }
         }
-        System.out.println("Нет доступных сборщиков для заказа #" + order.getId());
+        System.out.println("Нет свободных сборщиков для заказа #" + order.getId());
     }
 
-    public void assignToCourier(Order order)
+    public void freeCourier(Order order)
     {
         for (Courier courier : couriers)
         {
@@ -139,7 +139,7 @@ public class Storehouse
                 return;
             }
         }
-        System.out.println("Нет доступных курьеров для заказа #" + order.getId());
+        System.out.println("Нет свободных курьеров для заказа #" + order.getId());
     }
 
     public void restock(Map<Product, Integer> items)
@@ -151,20 +151,9 @@ public class Storehouse
         }
     }
 
-    public Map<Product, Integer> getStock() {
+    public Map<Product, Integer> getStock()
+    {
         return stock;
     }
 
-    private String formatProductMap(Map<Product, Integer> map) {
-        StringBuilder sb = new StringBuilder("{");
-        for (Map.Entry<Product, Integer> entry : map.entrySet()) {
-            sb.append("ID=").append(entry.getKey().getID())
-                    .append(": ").append(entry.getValue()).append(", ");
-        }
-        if (!map.isEmpty()) {
-            sb.setLength(sb.length() - 2);
-        }
-        sb.append("}");
-        return sb.toString();
-    }
 }

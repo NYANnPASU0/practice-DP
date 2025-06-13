@@ -7,45 +7,35 @@ public class Supplier
     public Supplier(Map<Product, Integer> inventory)
     {
         this.inventory = inventory;
-        System.out.println("Поставщик создан.");
     }
 
-    public void deliver(Map<Product, Integer> requestedItems)
+    public void deliver(Map<Product, Integer> requestItems)
     {
-        System.out.println("Поставщик получил запрос: " + formatProductMap(requestedItems));
+        System.out.println("Поставщик получил запрос за пополнение склада ");
         Map<Product, Integer> delivered = new HashMap<>();
 
-        for (Map.Entry<Product, Integer> entry : requestedItems.entrySet())
+        Map.Entry<Product, Integer>[] entries = requestItems.entrySet().toArray(new Map.Entry[0]);
+        for (int i = 0; i < entries.length; i++)
         {
+            Map.Entry<Product, Integer> entry = entries[i];
             Product product = entry.getKey();
             int available = inventory.getOrDefault(product, 0);
-            int toDeliver = Math.min(available, entry.getValue());
+            int deliver = Math.min(available, entry.getValue());
 
-            if (toDeliver > 0)
+            if (deliver > 0)
             {
-                delivered.put(product, toDeliver);
-                inventory.put(product, available - toDeliver);
+                delivered.put(product, deliver);
+                inventory.put(product, available - deliver);
             }
         }
-        System.out.println("Поставщик доставил на склад: " + formatProductMap(delivered));
+        System.out.println("Поставщик доставил на склад: " + output(delivered));
     }
 
-    private String formatProductMap(Map<Product, Integer> map)
+    private String output(Map<Product, Integer> map)
     {
-        StringBuilder sb = new StringBuilder("{");
-        for (Map.Entry<Product, Integer> entry : map.entrySet())
-        {
-            sb.append("ID=")
-            .append(entry.getKey().getID())
-            .append(": ")
-            .append(entry.getValue())
-            .append(", ");
-        }
-        if (!map.isEmpty())
-        {
-            sb.setLength(sb.length() - 2);
-        }
-        sb.append("}");
-        return sb.toString();
+        StringJoiner sj = new StringJoiner(", ", "{", "}");
+        map.forEach((product, quantity) ->
+                sj.add("ID=" + product.getID() + ": " + quantity));
+        return sj.toString();
     }
 }

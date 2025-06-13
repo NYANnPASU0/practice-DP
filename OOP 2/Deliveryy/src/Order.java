@@ -17,7 +17,7 @@ public class Order
         this.orderCart = orderCart;
         this.status = Status.PENDING;
         this.userAddress = userAddress;
-        System.out.printf("Создан новый заказ #%d: %s\n", id, orderCart);
+        System.out.printf("Создан заказ #%d: %s\n", id, orderCart);
     }
 
     public void setActualItems(Map<Product, Integer> items)
@@ -55,8 +55,4 @@ public class Order
         return id;
     }
 
-    public String toString()
-    {
-        return String.format("Заказ #%d [%s] Товары: %s", id, status, actualItems.keySet());
-    }
 }
