@@ -11,26 +11,24 @@ public class Storekeeper extends Employee
     public void work(Order order, Storehouse storehouse)
     {
         startWork(order);
-        System.out.printf("Сборщик %s начал сборку заказа #%d\n", getName(), order.getId());
-
         int itemsCount = 0;
-        for (int quantity : order.getActualItems().values()) {
+        for (int quantity : order.getActualItems().values())
+        {
             itemsCount += quantity;
         }
 
         int allTime = itemsCount * 45;
 
-        System.out.printf("Заказ #%d, время сборки: %d сек\n",
-                order.getId(), allTime);
+        System.out.printf("Заказ #%d, время сборки: %d сек\n", order.getId(), allTime);
 
         try
         {
             for (int i = 0; i < allTime; i += 5)
             {
-                Thread.sleep(50);
+                Thread.sleep(45);
                 if (i % 45 == 0 && i > 0)
                 {
-                    System.out.printf("Сборщик %s собирает заказ #%d... (%d/%d сек)\n",
+                    System.out.printf("Сборщик %s собирает заказ #%d... (%d из %d сек)\n",
                             getName(), order.getId(), i, allTime);
                 }
             }
@@ -42,6 +40,6 @@ public class Storekeeper extends Employee
         }
 
         finishWork();
-        storehouse.assignToCourier(order);
+        storehouse.freeCourier(order);
     }
 }

@@ -4,16 +4,16 @@ public abstract class Employee
 {
     private final LocalTime Start;
     private final LocalTime End;
-    private boolean isWorking;
-    private Order currentOrder;
+    private boolean occupation;
+    private Order currOrder;
     private final String name;
 
     public Employee(String name, LocalTime Start, LocalTime End)
     {
         this.name = name;
+        this.occupation = false;
         this.Start = Start;
         this.End = End;
-        this.isWorking = false;
     }
 
     public abstract void work(Order order, Storehouse storehouse);
@@ -42,19 +42,19 @@ public abstract class Employee
 
     public boolean isAvailable()
     {
-        return !isWorking;
+        return !occupation;
     }
 
     public void startWork(Order order)
     {
-        this.isWorking = true;
-        this.currentOrder = order;
+        this.occupation = true;
+        this.currOrder = order;
     }
 
     public void finishWork()
     {
-        this.isWorking = false;
-        this.currentOrder = null;
+        this.occupation = false;
+        this.currOrder = null;
     }
 
     public LocalTime getStart()
@@ -69,7 +69,7 @@ public abstract class Employee
 
     public Order getCurrentOrder()
     {
-        return currentOrder;
+        return currOrder;
     }
 
     public String getName()
